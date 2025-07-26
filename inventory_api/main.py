@@ -1,11 +1,26 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware # Import CORS
+
 from . import models, schemas
 from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# --- ADD THIS CORS MIDDLEWARE BLOCK ---
+origins = ["*"] # This allows all web pages to access your API
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all HTTP methods
+    allow_headers=["*"], # Allows all headers
+)
+# --- END OF NEW CODE ---
+
 
 # Dependency to get the DB session
 def get_db():
