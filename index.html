@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; background-color: #f4f7f6; color: #333; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        h1, h2 { color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #3498db; color: #fff; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        form { background-color: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        input[type="text"], input[type="number"] { width: 95%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #3498db; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #2980b9; }
+        .delete-btn { background-color: #e74c3c; }
+        .delete-btn:hover { background-color: #c0392b; }
+    </style>
+</head>
+<body>
+
+    <h1>Inventory Management</h1>
+
+    <h2>Add New Product</h2>
+    <form id="add-product-form">
+        <input type="text" id="name" placeholder="Product Name" required>
+        <input type="number" id="price" step="0.01" placeholder="Price" required>
+        <input type="number" id="quantity" placeholder="Quantity" required>
+        <button type="submit">Add Product</button>
+    </form>
+
+    <h2>Current Inventory</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="product-table-body">
+            </tbody>
+    </table>
+
+    <script>
+        // --- IMPORTANT: REPLACE WITH YOUR LIVE API URL ---
+        const API_URL = 'https://inventory-api-2ctd.onrender.com';
+
+        // Function to fetch all products and display them
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products/`);
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+
+        // Function to display products in the table
+        function displayProducts(products) {
+            const tableBody = document.getElementById('product-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            products.forEach(product => {
+                const row = `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.price}</td>
+                        <td>${product.quantity}</td>
+                        <td><button class="delete-btn" data-id="${product.id}">Delete</button></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Function to handle adding a new product
+        async function addProduct(event) {
+            event.preventDefault(); // Prevent the form from reloading the page
+
+            const name = document.getElementById('name').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            try {
+                const response = await fetch(`${API_URL}/products/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, quantity })
+                });
+
+                if (response.ok) {
+                    document.getElementById('add-product-form').reset(); // Clear the form
+                    fetchProducts(); // Refresh the product list
+                } else {
+                    console.error('Failed to add product');
+                }
+            } catch (error) {
+                console.error('Error adding product:', error);
+            }
+        }
+
+        // Function to handle deleting a product
+        async function handleDelete(event) {
+            if (event.target.classList.contains('delete-btn')) {
+                const productId = event.target.dataset.id;
+                
+                if (confirm(`Are you sure you want to delete product ID ${productId}?`)) {
+                    try {
+                        const response = await fetch(`${API_URL}/products/${productId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            fetchProducts(); // Refresh the product list
+                        } else {
+                            console.error('Failed to delete product');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting product:', error);
+                    }
+                }
+            }
+        }
+
+        // Add event listeners when the page loads
+        document.addEventListener('DOMContentLoaded', fetchProducts);
+        document.getElementById('add-product-form').addEventListener('submit', addProduct);
+        document.getElementById('product-table-body').addEventListener('click', handleDelete);
+
+    </script>
+</body>
+</html>
