@@ -1,77 +1,130 @@
-Inventory Management API 📦
-A robust and high-performance RESTful API for managing product inventory, built with Python and FastAPI. This project demonstrates best practices in modern backend development, including asynchronous programming, database integration, data validation, and automated testing.
+# Inventory Management API 📦
 
-Key Features
-Full CRUD Functionality: Create, Read, Update, and Delete operations for products.
+High-performance RESTful API for managing product inventory, built with FastAPI and modern Python practices.
 
-Asynchronous: Built on FastAPI for high-performance, non-blocking I/O.
+## ✨ Features
 
-Data Validation: Uses Pydantic for robust request and response data validation.
+- **Fast & Async** - Built with FastAPI for high-performance operations
+- **Full CRUD** - Complete product management (Create, Read, Update, Delete)
+- **Data Validation** - Pydantic schemas for robust request/response handling
+- **Database Ready** - SQLAlchemy with PostgreSQL (prod) / SQLite (dev)
+- **Testing Suite** - Comprehensive Pytest coverage
+- **Cloud Deploy** - Ready for Render, Docker, and other platforms
 
-Database Integration: Uses SQLAlchemy ORM for seamless interaction with a relational database (PostgreSQL in production, SQLite for local development).
+## 🛠️ Tech Stack
 
-Automated Testing: Includes a suite of unit tests written with Pytest to ensure reliability.
+- **Python 3.12** + **FastAPI**
+- **SQLAlchemy** + **PostgreSQL/SQLite**
+- **Pydantic** for validation
+- **Pytest** for testing
+- **Uvicorn** server
 
-Dependency Injection: Leverages FastAPI's dependency injection system for managing database sessions.
+## 🚀 Quick Start
 
-Deployment Ready: Configured to be deployed on cloud platforms like Render using environment variables.
+```bash
+# Clone and setup
+git clone https://github.com/Aayushvsv/inventory_management_api.git
+cd inventory_management_api
 
-Tech Stack
-Language: Python 3.12
-
-Framework: FastAPI
-
-Database: SQLAlchemy | PostgreSQL | SQLite
-
-Testing: Pytest
-
-Data Validation: Pydantic
-
-Server: Uvicorn
-
-Local Setup
-Clone the repository:
-
-Bash
-
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
-Create and activate a virtual environment:
-
-Bash
-
-# For Windows
+# Virtual environment
 python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
 
-# For macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-Install dependencies:
-
-Bash
-
+# Install dependencies
 pip install -r requirements.txt
-Run the application:
 
-Bash
-
+# Run the app
 uvicorn inventory_api.main:app --reload
-Access the interactive API documentation at http:your_ip:8000/docs.
+```
 
-API Endpoints
+**Access:**
+- API: `http://localhost:8000`
+- Docs: `http://localhost:8000/docs`
 
-Method	Endpoint	Description
-POST	/products/	Create a new product.
-GET	/products/	Retrieve a list of all products.
-GET	/products/{product_id}	Retrieve a single product by its ID.
-PUT	/products/{product_id}	Update an existing product.
-DELETE	/products/{product_id}	Delete a product.
+## 📋 API Endpoints
 
-Export to Sheets
-Running Tests
-To run the automated tests, execute the following command from the root directory:
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/products/` | Create product |
+| `GET` | `/products/` | List all products |
+| `GET` | `/products/{id}` | Get product by ID |
+| `PUT` | `/products/{id}` | Update product |
+| `DELETE` | `/products/{id}` | Delete product |
 
-Bash
+### Example Usage
 
+```bash
+# Create a product
+curl -X POST "http://localhost:8000/products/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Wireless Mouse",
+    "price": 29.99,
+    "quantity": 100,
+    "category": "Electronics"
+  }'
+```
+
+## 📁 Project Structure
+
+```
+inventory_management_api/
+├── inventory_api/
+│   ├── main.py          # FastAPI app
+│   ├── models.py        # Database models
+│   ├── schemas.py       # Pydantic schemas
+│   ├── crud.py          # Database operations
+│   └── database.py      # DB configuration
+├── tests/               # Test suite
+├── requirements.txt
+└── .env.example
+```
+
+## 🧪 Testing
+
+```bash
+# Run tests
 pytest
+
+# With coverage
+pytest --cov=inventory_api
+```
+
+## 🚀 Deployment
+
+### Environment Variables
+```env
+# Development
+DATABASE_URL=sqlite:///./inventory.db
+
+# Production
+DATABASE_URL=postgresql://user:password@host:port/database
+```
+
+### Docker
+```bash
+docker build -t inventory-api .
+docker run -p 8000:8000 inventory-api
+```
+
+### Render
+1. Connect GitHub repo
+2. Set `DATABASE_URL` environment variable
+3. Build: `pip install -r requirements.txt`
+4. Start: `uvicorn inventory_api.main:app --host 0.0.0.0 --port $PORT`
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create feature branch: `git checkout -b feature-name`
+3. Add tests and make changes
+4. Submit pull request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file.
+
+---
+
+⭐ **Star this repo if you found it helpful!**
